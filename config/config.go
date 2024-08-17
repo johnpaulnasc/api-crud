@@ -1,33 +1,37 @@
 package config
 
 import (
-    "gopkg.in/yaml.v2"
-    "io/ioutil"
-    "log"
+	"log"
+	"os"
+	"strconv"
 )
 
 type Config struct {
-    Database struct {
-        Driver   string `yaml:"driver"`
-        Host     string `yaml:"host"`
-        Port     int    `yaml:"port"`
-        User     string `yaml:"user"`
-        Password string `yaml:"password"`
-        Name     string `yaml:"name"`
-    } `yaml:"database"`
+	DBHost     string
+	DBPort     int
+	DBUser     string
+	DBPassword string
+	DBName     string
 }
 
-func LoadConfig() (*Config, error) {
-    data, err := ioutil.ReadFile("config/config.yaml")
-    if err != nil {
-        return nil, err
-    }
+func LoadConfig() *Config {
+	port, err := strconv.Atoi(getEnv("DB_PORT", "5432"))
+	if err != nil {
+		log.Fatalf("Invalid DB_PORT value: %v", err)
+	}
 
-    var cfg Config
-    err = yaml.Unmarshal(data, &cfg)
-    if err != nil {
-        return nil, err
-    }
+	return &Config{
+		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBPort:     port,
+		DBUser:     getEnv("DB_USER", "user"),
+		DBPassword: getEnv("DB_PASSWORD", "password"),
+		DBName:     getEnv("DB_NAME", "dbname"),
+	}
+}
 
-    return &cfg, nil
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
 }
