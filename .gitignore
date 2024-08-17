@@ -25,3 +25,6 @@
 .vscode/
 .idea/
 *.swp
+
+# Environment variables
+.env

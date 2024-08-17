@@ -7,25 +7,25 @@ import (
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
+	DATABASE_HOST     string
+	DATABASE_PORT     int
+	DATABASE_USER     string
+	DATABASE_PASSWORD string
+	DATABASE_NAME     string
 }
 
 func LoadConfig() *Config {
-	port, err := strconv.Atoi(getEnv("DB_PORT", "5432"))
+	port, err := strconv.Atoi(getEnv("DATABASE_PORT", "5432"))
 	if err != nil {
-		log.Fatalf("Invalid DB_PORT value: %v", err)
+		log.Fatalf("Invalid DATABASE_PORT value: %v", err)
 	}
 
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     port,
-		DBUser:     getEnv("DB_USER", "user"),
-		DBPassword: getEnv("DB_PASSWORD", "password"),
-		DBName:     getEnv("DB_NAME", "dbname"),
+		DATABASE_HOST:     getEnv("DATABASE_HOST", "localhost"),
+		DATABASE_PORT:     port,
+		DATABASE_USER:     getEnv("DATABASE_USER", "user"),
+		DATABASE_PASSWORD: getEnv("DATABASE_PASSWORD", "password"),
+		DATABASE_NAME:     getEnv("DATABASE_NAME", "dbname"),
 	}
 }
 

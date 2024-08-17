@@ -4,13 +4,14 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
+	"strconv"
+
 	"api-crud/config"
-	"api-crud/pkg/db"
 	"api-crud/internal/domain"
 	"api-crud/internal/repository"
 	"api-crud/internal/service"
+	"api-crud/pkg/db"
 
 	"gorm.io/gorm"
 )
@@ -66,19 +67,54 @@ func handleItems(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, items)
 	case "POST":
 		name := r.FormValue("name")
-		price := r.FormValue("price")
-		item := domain.Item{
-			Name:  name,
-			Price: price,
-		}
-		err := itemService.CreateItem(&item)
+		priceStr := r.FormValue("price")
+		price, err := strconv.ParseFloat(priceStr, 64)
 		if err != nil {
-			http.Error(w, "Failed to create item", http.StatusInternalServerError)
+			http.Error(w, "Invalid price format", http.StatusBadRequest)
+			return
+		}
+		idStr := r.FormValue("id")
+		if idStr != "" { // Se o ID existir, é uma atualização
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				http.Error(w, "Invalid ID format", http.StatusBadRequest)
+				return
+			}
+			item := domain.Item{
+				ID:    uint(id),
+				Name:  name,
+				Price: price,
+			}
+			err = itemService.UpdateItem(&item)
+			if err != nil {
+				http.Error(w, "Failed to update item", http.StatusInternalServerError)
+				return
+			}
+		} else { // Se não, é uma criação
+			item := domain.Item{
+				Name:  name,
+				Price: price,
+			}
+			err = itemService.CreateItem(&item)
+			if err != nil {
+				http.Error(w, "Failed to create item", http.StatusInternalServerError)
+				return
+			}
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	case "DELETE":
+		idStr := r.FormValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
+		err = itemService.DeleteItem(uint(id))
+		if err != nil {
+			http.Error(w, "Failed to delete item", http.StatusInternalServerError)
 			return
 		}
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-	case "PUT":
-	case "DELETE":
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
