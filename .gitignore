@@ -1,0 +1,27 @@
+# .gitignore
+
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+
+# Test binary, build files, etc.
+*.test
+*.out
+*.log
+
+# Go specific
+/vendor/
+/bin/
+/pkg/
+
+# Dependencies
+/go/pkg
+/go/bin
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
