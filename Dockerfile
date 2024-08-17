@@ -20,4 +20,4 @@ COPY --from=build /app/frontend /app/frontend
 
 EXPOSE 8080
 
-CMD ["./api-crud"]
+ENTRYPOINT ["./api-crud"]
