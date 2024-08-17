@@ -35,7 +35,7 @@ Certifique-se de ter os seguintes softwares instalados na sua máquina:
    DATABASE_USER=youruser
    DATABASE_PASSWORD=yourpassword
    DATABASE_HOST=postgres
-   DATABASE_PORT=54
+   DATABASE_PORT=5432
    DATABASE_NAME=yourdbname
 
 ## Como Rodar o Projeto
